@@ -115,7 +115,7 @@ const EXPECTED_SOLUTION = {
     {
       Index: 2,
       Name: 'c3',
-      Status: 'UB',
+      Status: 'FX',
       Lower: 0,
       Upper: 0,
       Primal: 0,
