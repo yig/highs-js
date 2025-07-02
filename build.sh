@@ -20,10 +20,12 @@ emmake make -j8 libhighs
 # here as well.
 # [-Ox] represents build optimisations (discussed in the next section).
 export EMCC_CLOSURE_ARGS="--jscomp_off=checkTypes"
+
+## The non-ES6 module version
 emcc -O3 \
 	-s EXPORTED_FUNCTIONS="@$root/exported_functions.json" \
 	-s EXPORTED_RUNTIME_METHODS="['cwrap']" \
-	-s MODULARIZE=1 \
+	-s MODULARIZE -s SINGLE_FILE -s EXPORT_NAME=HiGHS \
 	-s ALLOW_MEMORY_GROWTH=1 \
 	-s STACK_SIZE=4194304 \
 	-flto \
@@ -31,3 +33,16 @@ emcc -O3 \
 	--pre-js "$root/src/pre.js" \
 	--post-js "$root/src/post.js" \
 	lib/*.a -o highs.js
+
+## The ES6 module version
+emcc -O3 \
+	-s EXPORTED_FUNCTIONS="@$root/exported_functions.json" \
+	-s EXPORTED_RUNTIME_METHODS="['cwrap']" \
+	-s MODULARIZE -s SINGLE_FILE -s EXPORT_NAME=HiGHS \
+	-s ALLOW_MEMORY_GROWTH=1 \
+	-s STACK_SIZE=4194304 \
+	-flto \
+	--closure 1 \
+	--pre-js "$root/src/pre.js" \
+	--post-js "$root/src/post.js" \
+	lib/*.a -o highs.mjs

@@ -1,5 +1,25 @@
 # highs-js
 
+This is a a one-line change to `build.sh` (`-s MODULARIZE -s SINGLE_FILE -s EXPORT_NAME=HiGHS`) to generate a [modularized](https://emscripten.org/docs/compiling/Modularized-Output.html) [single-file](https://emscripten.org/docs/tools_reference/settings_reference.html#single-file) `.js` that has the WASM inside:
+
+```html
+<script src="build/highs.js"></script>
+```
+```js
+const highs = await HiGHS();
+highs.solve( ... );
+```
+
+There is also an [ES6 module](https://emscripten.org/docs/compiling/Modularized-Output.html#generating-es6-modules) version `-o highs.mjs`:
+
+```js
+// no script tag, just
+import HiGHS from 'build/highs.mjs';
+const highs = await HiGHS();
+```
+
+---
+
 [![npm version](https://badge.fury.io/js/highs.svg)](https://www.npmjs.com/package/highs)
 [![CI status](https://github.com/lovasoa/highs-js/actions/workflows/CI.yml/badge.svg)](https://github.com/lovasoa/highs-js/actions/workflows/CI.yml)
 [![package size](https://badgen.net/bundlephobia/minzip/highs)](https://bundlephobia.com/result?p=highs)
@@ -14,12 +34,7 @@ See the online demo at: https://lovasoa.github.io/highs-js/
 ## Usage
 
 ```js
-const highs_settings = {
-  // In node, locateFile is not needed
-  // In the browser, point locateFile to the URL of the wasm file (see below)
-  locateFile: (file) => "https://lovasoa.github.io/highs-js/" + file
-};
-const highs_promise = require("highs")(highs_settings);
+const highs_promise = require("highs")();
 
 const PROBLEM = `Maximize
  obj:
@@ -120,26 +135,6 @@ The problem has to be passed in the [CPLEX .lp file format](http://web.mit.edu/l
 
 For a more complete example, see the [`demo`](./demo/) folder.
 
-### Loading the wasm file
-
-This package requires a wasm file.
-You can find it in `node_modules/highs/build/highs.wasm` inside the NPM package,
-or download it from the [release page](https://github.com/lovasoa/highs-js/releases).
-By default, it will be loaded from the same path as the javascript file,
-which means you have to add the wasm file to your assets.
-
-Alternatively, if you don't want to bother with that, 
-if you are running highs-js in a web browser (and not in node),
-you can load the file directly from github:
-
-```js
-const highs_loader = require("highs");
-
-const highs = await highs_loader({
-  // In a browser, one can load the wasm file from github
-  locateFile: (file) => "https://lovasoa.github.io/highs-js/" + file
-});
-```
 ## Passing custom options
 
 HiGHS is configurable through [a large number of options](https://ergo-code.github.io/HiGHS/dev/options/definitions/).
@@ -147,7 +142,7 @@ HiGHS is configurable through [a large number of options](https://ergo-code.gith
 You can pass options as the second parameter to `solve` : 
 
 ```js
-const highs_promise = require("highs")(highs_settings);
+const highs_promise = require("highs")();
 const highs = await highs_promise;
 const sol = highs.solve(PROBLEM, {
   "allowed_cost_scale_factor": 2,
